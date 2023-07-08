@@ -13,6 +13,16 @@ class _DataGajiState extends State<DataGaji> {
   double screenWidth = 0;
   double screenHeight = 0;
 
+  List<String> kolomTabel = [
+    "No",
+    "NIP",
+    "Nama",
+    "Gaji Pokok",
+    "Tunjangan\nTetap",
+    "Total",
+    "Periode",
+  ];
+
   @override
   Widget build(BuildContext context) {
     screenWidth = MediaQuery.of(context).size.width;
@@ -20,7 +30,7 @@ class _DataGajiState extends State<DataGaji> {
 
     return Scaffold(
       drawer: const CustomAppDrawer(),
-      drawerEdgeDragWidth: screenWidth,
+      drawerEdgeDragWidth: screenWidth / 4,
       backgroundColor: CustomStyle.mainColor,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(12),
@@ -65,22 +75,26 @@ class _DataGajiState extends State<DataGaji> {
                     width: screenWidth,
                     color: Colors.white54,
                     padding: const EdgeInsets.all(8),
-                    child: Table(
-                      border: TableBorder.all(color: Colors.black),
-                      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                      children: [
-                        TableRow(
-                          children: [
-                            tableCell("Bulan/Tahun"),
-                            tableCell("Gaji Pokok"),
-                            tableCell("Tunjangan Transportasi"),
-                            tableCell("Uang Makan"),
-                            tableCell("Potongan"),
-                            tableCell("Total Gaji"),
-                            tableCell("Cetak Slip"),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                        horizontalMargin: 6,
+                        columnSpacing: 14,
+                        border: TableBorder.all(color: Colors.black),
+                        columns: [
+                          for(int i = 0; i < kolomTabel.length; i++)...<DataColumn>[
+                            DataColumn(
+                              label: Text(
+                                kolomTabel[i],
+                                style: CustomStyle.black20.copyWith(
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
                           ],
-                        ),
-                      ],
+                        ],
+                        rows: const [],
+                      ),
                     ),
                   ),
                 ],
