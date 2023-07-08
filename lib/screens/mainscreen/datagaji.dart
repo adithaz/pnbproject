@@ -17,8 +17,9 @@ class _DataGajiState extends State<DataGaji> {
     "No",
     "NIP",
     "Nama",
-    "Gaji Pokok",
+    "Gaji\nPokok",
     "Tunjangan\nTetap",
+    "Tunjangan\nTransportasi",
     "Total",
     "Periode",
   ];
@@ -79,7 +80,7 @@ class _DataGajiState extends State<DataGaji> {
                       scrollDirection: Axis.horizontal,
                       child: DataTable(
                         horizontalMargin: 6,
-                        columnSpacing: 14,
+                        columnSpacing: 12,
                         border: TableBorder.all(color: Colors.black),
                         columns: [
                           for(int i = 0; i < kolomTabel.length; i++)...<DataColumn>[
