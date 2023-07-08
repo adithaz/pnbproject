@@ -56,24 +56,24 @@ class _MainScreenState extends State<MainScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.only(
-              top: 90,
+              top: 110,
             ),
             child: body,
           ),
           Container(
-            height: 90,
             width: screenWidth,
             color: CustomStyle.accentColor,
             child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
+                  vertical: 4,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Jurusan Teknik Elektro",
+                      "Jurusan\nTeknik Elektro",
                       style: CustomStyle.white20.copyWith(
                         letterSpacing: -2,
                         fontSize: 24,

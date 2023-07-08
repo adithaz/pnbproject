@@ -10,7 +10,7 @@ class Bantuan extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: CustomStyle.mainColor,
+      backgroundColor: Colors.transparent,
       body: Column(
         children: [
           SizedBox(height: screenHeight / 8,),

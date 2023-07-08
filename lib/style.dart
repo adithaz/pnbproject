@@ -8,11 +8,11 @@ class CustomStyle {
 
   static TextStyle white20 = const TextStyle(
     color: Colors.white,
-    fontSize: 20,
+    fontSize: 16,
   );
 
   static TextStyle black20 = const TextStyle(
     color: Colors.black,
-    fontSize: 20,
+    fontSize: 16,
   );
 }

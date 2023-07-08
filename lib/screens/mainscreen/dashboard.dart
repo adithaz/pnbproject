@@ -102,11 +102,7 @@ class _DashboardState extends State<Dashboard> {
                                 const SizedBox(height: 20,),
                                 GestureDetector(
                                   onTap: () {
-                                    Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                        builder: (context) => const MainScreen(),
-                                      ),
-                                    );
+                                    //Kode
                                   },
                                   child: Container(
                                     height: 35,
@@ -114,7 +110,7 @@ class _DashboardState extends State<Dashboard> {
                                     color: CustomStyle.secondaryColor,
                                     child: Center(
                                       child: Text(
-                                        "Ubah Profil",
+                                        "Ubah Foto",
                                         style: CustomStyle.white20.copyWith(
                                           fontSize: 14,
                                         ),

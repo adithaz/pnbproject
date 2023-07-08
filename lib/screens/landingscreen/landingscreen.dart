@@ -41,85 +41,89 @@ class _LandingScreenState extends State<LandingScreen> {
     }
 
     return Scaffold(
-      backgroundColor: CustomStyle.mainColor,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Container(
-              margin: const EdgeInsets.only(top: 120),
-              child: body,
-            ),
-            Column(
+      body: Stack(
+        children: [
+          Image.asset('assets/images/bg.png', height: screenHeight, fit: BoxFit.fitHeight,),
+          SafeArea(
+            child: Stack(
               children: [
-                Stack(
+                Container(
+                  margin: const EdgeInsets.only(top: 120),
+                  child: body,
+                ),
+                Column(
                   children: [
-                    Container(
-                      height: 45,
-                      width: screenWidth,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            CustomStyle.accentColor.withOpacity(0),
-                            CustomStyle.accentColor,
-                          ],
-                        ),
-                      ),
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 12,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Padding(
-                            padding: EdgeInsets.only(left: 20),
-                            child: Text(
-                              "Politeknik Negeri Bali",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                              ),
+                    Stack(
+                      children: [
+                        Container(
+                          height: 45,
+                          width: screenWidth,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                CustomStyle.accentColor.withOpacity(0),
+                                CustomStyle.accentColor,
+                              ],
                             ),
+                          ),
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 12,
+                          ),
+                          child: const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(left: 20),
+                                child: Text(
+                                  "Politeknik Negeri Bali",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Image.asset('assets/images/logopnb.png', height: 70,),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Penggajian",
+                            style: CustomStyle.white20,
+                          ),
+                          Row(
+                            children: [
+                              navigation(0, "Home"),
+                              divider(),
+                              navigation(1, "Informasi Web"),
+                              divider(),
+                              navigation(2, "Bantuan"),
+                              divider(),
+                              navigation(3, "Login"),
+                            ],
                           ),
                         ],
                       ),
                     ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Image.asset('assets/images/logopnb.png', height: 70,),
-                    ),
                   ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Penggajian",
-                        style: CustomStyle.white20,
-                      ),
-                      Row(
-                        children: [
-                          navigation(0, "Home"),
-                          divider(),
-                          navigation(1, "Informasi Web"),
-                          divider(),
-                          navigation(2, "Bantuan"),
-                          divider(),
-                          navigation(3, "Login"),
-                        ],
-                      ),
-                    ],
-                  ),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

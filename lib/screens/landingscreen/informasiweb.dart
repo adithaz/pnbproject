@@ -10,7 +10,7 @@ class InformasiWeb extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: CustomStyle.mainColor,
+      backgroundColor: Colors.transparent,
       body: Column(
         children: [
           const SizedBox(height: 60,),
@@ -20,14 +20,14 @@ class InformasiWeb extends StatelessWidget {
               children: [
                 Expanded(
                   flex: 1,
-                  child: infoTile('assets/images/1.png', "Tentang Website", () {
+                  child: infoTile('assets/images/informasi-website1.png', "Tentang Website", () {
                     print('sd');
                   }),
                 ),
                 const SizedBox(width: 16,),
                 Expanded(
                   flex: 1,
-                  child: infoTile('assets/images/2.png', "Halaman Admin", () {
+                  child: infoTile('assets/images/informasi-website2.png', "Halaman Admin", () {
                     print('sd');
                   }),
                 ),
@@ -42,14 +42,14 @@ class InformasiWeb extends StatelessWidget {
               children: [
                 Expanded(
                   flex: 1,
-                  child: infoTile('assets/images/3.png', "Fitur Lainnya", () {
+                  child: infoTile('assets/images/informasi-website3.png', "Fitur Lainnya", () {
                     print('sd');
                   }),
                 ),
                 const SizedBox(width: 16,),
                 Expanded(
                   flex: 1,
-                  child: infoTile('assets/images/4.png', "Halaman Karyawan", () {
+                  child: infoTile('assets/images/informasi-website4.png', "Halaman Karyawan", () {
                     print('sd');
                   }),
                 ),
@@ -67,9 +67,14 @@ class InformasiWeb extends StatelessWidget {
       color: Colors.white,
       child: Column(
         children: [
-          Image.asset(
-            asset,
-            height: 140,
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 12,
+            ),
+            child: Image.asset(
+              asset,
+              height: 230 / 2,
+            ),
           ),
           Text(
             text,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pnbproject/screens/landingscreen/landingscreen.dart';
-import 'package:pnbproject/screens/landingscreen/login.dart';
 
 void main() {
   runApp(const MyApp());
