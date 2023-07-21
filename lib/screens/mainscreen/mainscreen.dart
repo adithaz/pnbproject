@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:pnbproject/screens/mainscreen/absensi.dart';
 import 'package:pnbproject/screens/mainscreen/dashboard.dart';
 import 'package:pnbproject/screens/mainscreen/datagaji.dart';
@@ -7,7 +8,8 @@ import 'package:pnbproject/style.dart';
 
 class MainScreen extends StatefulWidget {
   final int? screenState;
-  const MainScreen({Key? key, this.screenState}) : super(key: key);
+  final bool? isFirstLoad;
+  const MainScreen({Key? key, this.screenState, this.isFirstLoad}) : super(key: key);
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -17,6 +19,8 @@ class _MainScreenState extends State<MainScreen> {
   int screenState = 0;
   double screenWidth = 0;
   double screenHeight = 0;
+  String name = 'Nama';
+  List<String> namaBali = ['putu', 'wayan', 'made', 'kadek', 'nyoman', 'komang', 'ketut', 'nengah', 'cokorda'];
   late Widget body;
 
   @override
@@ -28,6 +32,25 @@ class _MainScreenState extends State<MainScreen> {
         screenState = widget.screenState!;
       });
     }
+
+    getMainName();
+  }
+
+  void getMainName() async {
+    await Hive.openBox('userData');
+    var box = Hive.box('userData');
+    List<String> temp = box.get('name').split(' ');
+    if(temp[0].toLowerCase() == 'i' || temp[0].toLowerCase() == 'ni') {
+      temp.removeAt(0);
+    }
+    for(int i = 0; i < namaBali.length; i++) {
+      if(temp.contains(namaBali[i])) {
+        temp.removeAt(0);
+      }
+    }
+    setState(() {
+      name = temp[0];
+    });
   }
 
   @override
@@ -37,7 +60,7 @@ class _MainScreenState extends State<MainScreen> {
 
     switch(screenState) {
       case 0:
-        body = const Dashboard();
+        body = Dashboard(isFirstLoad: widget.isFirstLoad ?? false,);
         break;
       case 1:
         body = const Absensi();
@@ -88,7 +111,7 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                         const SizedBox(width: 12,),
                         Text(
-                          "Nama",
+                          name,
                           style: CustomStyle.white20.copyWith(
                             letterSpacing: -1,
                           ),

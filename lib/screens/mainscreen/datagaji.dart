@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:pnbproject/model/gaji.dart';
 import 'package:pnbproject/style.dart';
 import 'package:pnbproject/widgets/customappdrawer.dart';
 
@@ -13,6 +15,9 @@ class _DataGajiState extends State<DataGaji> {
   double screenWidth = 0;
   double screenHeight = 0;
 
+  Gaji gaji = Gaji();
+  bool showData = false;
+
   List<String> kolomTabel = [
     "No",
     "NIP",
@@ -23,6 +28,30 @@ class _DataGajiState extends State<DataGaji> {
     "Total",
     "Periode",
   ];
+
+  List<String> rowGaji = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getDataGaji();
+  }
+
+  void getDataGaji() async {
+    Gaji().getDataGaji().then((value) async {
+      setState(() {
+        gaji = value!;
+        rowGaji.add(gaji.nip.toString());
+        rowGaji.add(gaji.pegawai!.nama);
+        rowGaji.add(gaji.gajiPokok.toString());
+        rowGaji.add(gaji.tunjanganTetap.toString());
+        rowGaji.add(gaji.tunjanganTransportasi.toString());
+        rowGaji.add(gaji.total.toString());
+        rowGaji.add(gaji.periode.toString());
+        showData = true;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +123,28 @@ class _DataGajiState extends State<DataGaji> {
                             ),
                           ],
                         ],
-                        rows: const [],
+                        rows: [
+                          showData ? DataRow(
+                            cells: [
+                              const DataCell(
+                                Text("1"),
+                              ),
+                              for(int i = 0; i < rowGaji.length; i++)...<DataCell>[
+                                DataCell(
+                                  Text(rowGaji[i]),
+                                ),
+                              ],
+                            ],
+                          ) : DataRow(
+                            cells: [
+                              for(int i = 0; i < kolomTabel.length; i++)...<DataCell>[
+                                const DataCell(
+                                  Text("Loading..."),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ),

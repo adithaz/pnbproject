@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:pnbproject/screens/landingscreen/bantuan.dart';
 import 'package:pnbproject/screens/landingscreen/home.dart';
 import 'package:pnbproject/screens/landingscreen/informasiweb.dart';
@@ -20,6 +21,25 @@ class _LandingScreenState extends State<LandingScreen> {
 
   late Widget body;
 
+  bool isLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    checkLogin();
+  }
+
+  void checkLogin() async {
+    await Hive.openBox('userData');
+    var box = Hive.box('userData');
+
+    if(box.get('token') != null) {
+      setState(() {
+        isLoggedIn = true;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     screenWidth = MediaQuery.of(context).size.width;
@@ -36,94 +56,99 @@ class _LandingScreenState extends State<LandingScreen> {
         body = const Bantuan();
         break;
       case 3:
-        body = const Login();
+        body = Login(isLoggedInUser: isLoggedIn);
         break;
     }
 
     return Scaffold(
-      body: Stack(
-        children: [
-          Image.asset('assets/images/bg.png', height: screenHeight, fit: BoxFit.fitHeight,),
-          SafeArea(
-            child: Stack(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 120),
-                  child: body,
-                ),
-                Column(
-                  children: [
-                    Stack(
-                      children: [
-                        Container(
-                          height: 45,
-                          width: screenWidth,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                CustomStyle.accentColor.withOpacity(0),
-                                CustomStyle.accentColor,
-                              ],
-                            ),
-                          ),
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 12,
-                          ),
-                          child: const Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(left: 20),
-                                child: Text(
-                                  "Politeknik Negeri Bali",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ),
+      resizeToAvoidBottomInset: false,
+      body: Container(
+        height: screenHeight,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/bg.png'),
+            fit: BoxFit.fitHeight,
+          )
+        ),
+        child: SafeArea(
+          child: Stack(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 120),
+                child: body,
+              ),
+              Column(
+                children: [
+                  Stack(
+                    children: [
+                      Container(
+                        height: 45,
+                        width: screenWidth,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              CustomStyle.accentColor.withOpacity(0),
+                              CustomStyle.accentColor,
                             ],
                           ),
                         ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Image.asset('assets/images/logopnb.png', height: 70,),
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(left: 20),
+                              child: Text(
+                                "Politeknik Negeri Bali",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Image.asset('assets/images/logopnb.png', height: 70,),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Penggajian",
+                          style: CustomStyle.white20,
+                        ),
+                        Row(
+                          children: [
+                            navigation(0, "Home"),
+                            divider(),
+                            navigation(1, "Informasi Web"),
+                            divider(),
+                            navigation(2, "Bantuan"),
+                            divider(),
+                            navigation(3, isLoggedIn ? "Dashboard" : "Login"),
+                          ],
                         ),
                       ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Penggajian",
-                            style: CustomStyle.white20,
-                          ),
-                          Row(
-                            children: [
-                              navigation(0, "Home"),
-                              divider(),
-                              navigation(1, "Informasi Web"),
-                              divider(),
-                              navigation(2, "Bantuan"),
-                              divider(),
-                              navigation(3, "Login"),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

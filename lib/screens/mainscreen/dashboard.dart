@@ -1,16 +1,25 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:pnbproject/model/pegawai.dart';
 import 'package:pnbproject/screens/mainscreen/mainscreen.dart';
 import 'package:pnbproject/style.dart';
 import 'package:pnbproject/widgets/customappdrawer.dart';
 
 class Dashboard extends StatefulWidget {
-  const Dashboard({Key? key}) : super(key: key);
+  final bool? isFirstLoad;
+  const Dashboard({Key? key, this.isFirstLoad}) : super(key: key);
 
   @override
   State<Dashboard> createState() => _DashboardState();
 }
 
 class _DashboardState extends State<Dashboard> {
+  Pegawai pegawai = Pegawai();
+  String foto = '';
   double screenWidth = 0;
   double screenHeight = 0;
 
@@ -20,6 +29,50 @@ class _DashboardState extends State<Dashboard> {
   String jabatan = '';
   String tglMasuk = '';
   String status = '';
+
+  @override
+  void initState() {
+    super.initState();
+    Pegawai().getPegawaiData().then((value) {
+      if(value != null) {
+        setState(() {
+          pegawai = value;
+          nama = value.nama;
+          nip = value.nip.toString();
+          golongan = value.golongan!.golongan;
+          jabatan = value.jabatan!.jabatan;
+          tglMasuk = DateFormat('yyyy-MM-dd').format(value.tanggalMasuk!);
+          status = value.status;
+        });
+        setMainName();
+        saveDataPegawai();
+      }
+    });
+  }
+
+  void saveDataPegawai() async {
+    await Hive.openBox('pegawai');
+    var box = Hive.box('pegawai');
+    box.put('nip', int.parse(nip));
+  }
+
+  void setMainName() async {
+    await Hive.openBox('userData');
+    var box = Hive.box('userData');
+    box.put('name', nama);
+
+    if(widget.isFirstLoad!) {
+      reload();
+    }
+  }
+
+  void reload() {
+    Navigator.pushReplacement(context,
+      MaterialPageRoute(
+        builder: (context) => const MainScreen(),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,12 +129,13 @@ class _DashboardState extends State<Dashboard> {
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 const Text(
                                   "\nNama \n\nNIP \n\nGolongan \n\nJabatan \n\nTanggal Masuk \n\nStatus ",
                                 ),
                                 Text(
-                                  ": $nama\n\n: $nip\n\n: $golongan\n\n: $jabatan\n\n: $tglMasuk\n\n: $status",
+                                  "\n: $nama\n\n: $nip\n\n: $golongan\n\n: $jabatan\n\n: $tglMasuk\n\n: $status",
                                 ),
                               ],
                             ),
@@ -94,15 +148,32 @@ class _DashboardState extends State<Dashboard> {
                             child: Column(
                               children: [
                                 const SizedBox(height: 20,),
-                                Container(
+                                foto == '' ? Container(
                                   width: screenWidth,
                                   color: Colors.black,
                                   height: 135,
+                                ) : Container(
+                                  width: screenWidth,
+                                  height: 135,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: FileImage(
+                                        File(foto),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                                 const SizedBox(height: 20,),
                                 GestureDetector(
-                                  onTap: () {
-                                    //Kode
+                                  onTap: () async {
+                                    final ImagePicker picker = ImagePicker();
+                                    final XFile? image = await picker.pickImage(source: ImageSource.camera);
+
+                                    setState(() {
+                                      foto = image!.path;
+                                    });
+
+                                    Pegawai().updateFoto(foto);
                                   },
                                   child: Container(
                                     height: 35,

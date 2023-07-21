@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:pnbproject/model/user.dart';
 import 'package:pnbproject/screens/landingscreen/landingscreen.dart';
-import 'package:pnbproject/screens/landingscreen/login.dart';
 import 'package:pnbproject/screens/mainscreen/mainscreen.dart';
 import 'package:pnbproject/style.dart';
 
@@ -58,13 +59,25 @@ class CustomAppDrawer extends StatelessWidget {
             ));
           }),
           drawerTile(Icons.logout, "Keluar", () {
-            Navigator.pushReplacement(context, MaterialPageRoute(
-              builder: (context) => const LandingScreen(),
-            ));
+            getUserToken().then((token) {
+              User().logoutUser(token).then((success) {
+                if(success) {
+                  Navigator.pushReplacement(context, MaterialPageRoute(
+                    builder: (context) => const LandingScreen(),
+                  ));
+                }
+              });
+            });
           }),
         ],
       ),
     );
+  }
+
+  Future<String> getUserToken() async {
+    await Hive.openBox('userData');
+    var box = Hive.box('userData');
+    return box.get('token');
   }
 
   Widget drawerTile(IconData icon, String text, VoidCallback function) {

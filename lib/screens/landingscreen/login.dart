@@ -1,19 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:pnbproject/model/user.dart';
 import 'package:pnbproject/screens/mainscreen/mainscreen.dart';
 import 'package:pnbproject/style.dart';
 
 class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+  final bool isLoggedInUser;
+  const Login({Key? key, required this.isLoggedInUser}) : super(key: key);
 
   @override
   State<Login> createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
-  TextEditingController usernameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   double screenWidth = 0;
   double screenHeight = 0;
+  bool buildUI = false;
+  
+  @override
+  void initState() {
+    super.initState();
+    checkLogin();
+  }
+  
+  void checkLogin() async {
+    if(widget.isLoggedInUser) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        navigateNext();
+      });
+    } else {
+      setState(() {
+        buildUI = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +44,13 @@ class _LoginState extends State<Login> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Column(
+      body: buildUI ? Column(
         children: [
-          SizedBox(height: screenHeight / 5),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.ease,
+            height: MediaQuery.of(context).viewInsets.bottom > 0 ? 30 : screenHeight / 5,
+          ),
           Container(
             width: screenWidth,
             color: Colors.white38,
@@ -54,17 +80,34 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                 ),
-                formText(Icons.person, "Username", usernameController),
+                formText(Icons.person, "Email", emailController),
                 const SizedBox(height: 16,),
                 formText(Icons.lock, "Password", passwordController),
                 const SizedBox(height: 16,),
                 GestureDetector(
                   onTap: () {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) => const MainScreen(),
-                      ),
-                    );
+                    String email = emailController.text;
+                    String password = passwordController.text.trim();
+
+                    if(email.isEmpty) {
+                      showNotification("Email masih kosong!");
+                    } else if(password.isEmpty) {
+                      showNotification("Password masih kosong!");
+                    } else {
+                      User().loginUser(email, password).then((value) async {
+                        if(value != null) {
+                          await Hive.openBox('userData');
+                          var box = Hive.box('userData');
+                          box.put('email', value.email);
+                          box.put('password', value.password);
+                          box.put('token', value.token);
+
+                          navigateNext();
+                        } else {
+                          showNotification("Email atau password salah!");
+                        }
+                      });
+                    }
                   },
                   child: Container(
                     height: 35,
@@ -83,6 +126,22 @@ class _LoginState extends State<Login> {
             ),
           ),
         ],
+      ) : const SizedBox(),
+    );
+  }
+
+  void navigateNext() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => const MainScreen(isFirstLoad: true,),
+      ),
+    );
+  }
+
+  void showNotification(String text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(text),
       ),
     );
   }

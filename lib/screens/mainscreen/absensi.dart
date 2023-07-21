@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:pnbproject/model/absen.dart';
 import 'package:pnbproject/style.dart';
 import 'package:pnbproject/widgets/confirmationdialog.dart';
 import 'package:pnbproject/widgets/customappdrawer.dart';
@@ -16,6 +18,57 @@ class _AbsensiState extends State<Absensi> {
   double screenHeight = 0;
 
   String absensi = '';
+  String token = '';
+  int nip = 0;
+  int now = DateTime.now().weekday;
+  bool enabled = true;
+
+  List<String> weekDay = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+
+  @override
+  void initState() {
+    super.initState();
+    getNipAndToken();
+    checkAbsen();
+  }
+
+  void checkAbsen() async {
+    await Hive.openBox('absen');
+    var box = Hive.box('absen');
+
+    int hari = box.get('hari');
+    bool isAbsen = box.get('isAbsen');
+    String hadir = box.get('hadir');
+
+    if(hari == now) {
+      if(isAbsen) {
+        setState(() {
+          enabled = false;
+          absensi = hadir;
+        });
+      }
+    }
+  }
+
+  void lockAbsen(String hadir) async {
+    await Hive.openBox('absen');
+    var box = Hive.box('absen');
+
+    box.put('hari', now);
+    box.put('isAbsen', true);
+    box.put('hadir', hadir);
+  }
+
+  void getNipAndToken() async {
+    await Hive.openBox('pegawai');
+    await Hive.openBox('userData');
+    var box = Hive.box('pegawai');
+    var box2 = Hive.box('userData');
+    setState(() {
+      nip = box.get('nip');
+      token = box2.get('token');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,17 +109,17 @@ class _AbsensiState extends State<Absensi> {
                       children: [
                         Expanded(
                           flex: 1,
-                          child: absenTile("Senin"),
+                          child: absenTile("Senin", 1),
                         ),
                         const SizedBox(width: 4,),
                         Expanded(
                           flex: 1,
-                          child: absenTile("Selasa"),
+                          child: absenTile("Selasa", 2),
                         ),
                         const SizedBox(width: 4,),
                         Expanded(
                           flex: 1,
-                          child: absenTile("Rabu"),
+                          child: absenTile("Rabu", 3),
                         ),
                       ],
                     ),
@@ -80,12 +133,12 @@ class _AbsensiState extends State<Absensi> {
                       children: [
                         Expanded(
                           flex: 1,
-                          child: absenTile("Kamis"),
+                          child: absenTile("Kamis", 4),
                         ),
                         const SizedBox(width: 4,),
                         Expanded(
                           flex: 1,
-                          child: absenTile("Jumat"),
+                          child: absenTile("Jumat", 5),
                         ),
                         const SizedBox(width: 4,),
                         const Expanded(
@@ -104,7 +157,7 @@ class _AbsensiState extends State<Absensi> {
     );
   }
 
-  Widget absenTile(String day) {
+  Widget absenTile(String day, int index) {
     return Container(
       padding: const EdgeInsets.all(8.0),
       color: CustomStyle.tertiaryColor,
@@ -135,22 +188,44 @@ class _AbsensiState extends State<Absensi> {
             ),
           ),
           const SizedBox(height: 12,),
-          const CustomRadioGroup(),
+          index == now ? CustomRadioGroup(
+            enabled: weekDay[now] == day ? (enabled ? true : false) : false,
+            initValue: !enabled ? absensi : '',
+            value: (absen) {
+              setState(() {
+                absensi = absen;
+              });
+            },
+          ) : CustomRadioGroup(
+            enabled: weekDay[now] == day ? (enabled ? true : false) : false,
+            value: (absen) {
+              setState(() {
+                absensi = absen;
+              });
+            },
+          ),
           const SizedBox(height: 12,),
           GestureDetector(
             onTap: () {
-              Feedback.forTap(context);
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return const ConfirmationDialog();
-                },
-              );
+              if(weekDay[now] == day && enabled) {
+                Feedback.forTap(context);
+                Absen().kirimAbsen(nip, absensi, token).then((value) {
+                  if(value == true) {
+                    lockAbsen(absensi);
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const ConfirmationDialog();
+                      },
+                    );
+                  }
+                });
+              }
             },
             child: Container(
               height: 30,
               width: screenWidth / 2.5,
-              color: CustomStyle.accentColor,
+              color: weekDay[now] == day ? (enabled ? CustomStyle.accentColor : Colors.grey) : Colors.grey,
               child: Center(
                 child: Text(
                   "Absen Pegawai",
