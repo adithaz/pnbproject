@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:pnbproject/screens/mainscreen/absensi.dart';
@@ -20,6 +22,7 @@ class _MainScreenState extends State<MainScreen> {
   double screenWidth = 0;
   double screenHeight = 0;
   String name = 'Nama';
+  String foto = '';
   List<String> namaBali = ['putu', 'wayan', 'made', 'kadek', 'nyoman', 'komang', 'ketut', 'nengah', 'cokorda'];
   late Widget body;
 
@@ -33,10 +36,10 @@ class _MainScreenState extends State<MainScreen> {
       });
     }
 
-    getMainName();
+    getMainNameAndPhoto();
   }
 
-  void getMainName() async {
+  void getMainNameAndPhoto() async {
     await Hive.openBox('userData');
     var box = Hive.box('userData');
     List<String> temp = box.get('name').split(' ');
@@ -48,9 +51,16 @@ class _MainScreenState extends State<MainScreen> {
         temp.removeAt(0);
       }
     }
-    setState(() {
-      name = temp[0];
-    });
+    if(box.get('foto') == null) {
+      setState(() {
+        name = temp[0];
+      });
+    } else {
+      setState(() {
+        foto = box.get('foto');
+        name = temp[0];
+      });
+    }
   }
 
   @override
@@ -124,12 +134,15 @@ class _MainScreenState extends State<MainScreen> {
                             shape: BoxShape.circle,
                             color: Colors.white,
                           ),
-                          child: const Center(
+                          child: foto == '' ? const Center(
                             child: Icon(
                               Icons.person,
                               color: Colors.black,
                               size: 30,
                             ),
+                          ) : ClipRRect(
+                            borderRadius: BorderRadius.circular(1000),
+                            child: Image.file(File(foto)),
                           ),
                         ),
                       ],

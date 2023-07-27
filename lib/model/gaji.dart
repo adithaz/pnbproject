@@ -12,7 +12,7 @@ class Gaji {
   final int tunjanganTetap;
   final int tunjanganTransportasi;
   final int total;
-  final DateTime? periode;
+  final String periode;
   final Pegawai? pegawai;
 
   Gaji({
@@ -22,7 +22,7 @@ class Gaji {
     this.tunjanganTetap = 0,
     this.tunjanganTransportasi = 0,
     this.total = 0,
-    this.periode,
+    this.periode = '',
     this.pegawai,
   });
 
@@ -34,7 +34,7 @@ class Gaji {
       tunjanganTetap: json['data'][0]['tunjangan_tetap'],
       tunjanganTransportasi: json['data'][0]['tunjangan_transportasi'],
       total: json['data'][0]['total'],
-      periode: DateTime.tryParse(json['data'][0]['periode']),
+      periode: json['data'][0]['periode'],
       pegawai: Pegawai(
         nip: json['data'][0]['data-diri']['nip'],
         idJabatan: json['data'][0]['data-diri']['id_jabatan'],
@@ -71,7 +71,6 @@ class Gaji {
 
       final output = jsonDecode(response.body);
       if(response.statusCode == 200) {
-        print(output);
         Gaji gaji = Gaji.fromJson(output);
         return gaji;
       } else {

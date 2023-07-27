@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:pnbproject/model/gaji.dart';
+import 'package:pnbproject/screens/printscreen.dart';
 import 'package:pnbproject/style.dart';
 import 'package:pnbproject/widgets/customappdrawer.dart';
 
@@ -17,6 +17,8 @@ class _DataGajiState extends State<DataGaji> {
 
   Gaji gaji = Gaji();
   bool showData = false;
+
+  String golongan = 'A';
 
   List<String> kolomTabel = [
     "No",
@@ -47,7 +49,7 @@ class _DataGajiState extends State<DataGaji> {
         rowGaji.add(gaji.tunjanganTetap.toString());
         rowGaji.add(gaji.tunjanganTransportasi.toString());
         rowGaji.add(gaji.total.toString());
-        rowGaji.add(gaji.periode.toString());
+        rowGaji.add(gaji.periode);
         showData = true;
       });
     });
@@ -90,10 +92,29 @@ class _DataGajiState extends State<DataGaji> {
                           "Data Gaji",
                           style: CustomStyle.white20,
                         ),
-                        const RotatedBox(
-                          quarterTurns: 1,
-                          child: Icon(
-                            Icons.compare_arrows,
+    //               rowGaji.add(gaji.nip.toString());
+    //               rowGaji.add(gaji.pegawai!.nama);
+    //             rowGaji.add(gaji.gajiPokok.toString());
+    //     rowGaji.add(gaji.tunjanganTetap.toString());
+    // rowGaji.add(gaji.tunjanganTransportasi.toString());
+    // rowGaji.add(gaji.total.toString());
+    // rowGaji.add(gaji.periode.toString());
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context) => PrintScreen(
+                                nama: rowGaji[1],
+                                nip: rowGaji[0],
+                                golongan: golongan,
+                                gajiPokok: rowGaji[2],
+                                tunjanganTetap: rowGaji[3],
+                                tunjanganTransportasi: rowGaji[4],
+                                total: rowGaji[5],
+                              ),
+                            ));
+                          },
+                          child: const Icon(
+                            Icons.print,
                             color: Colors.white,
                           ),
                         ),

@@ -217,7 +217,11 @@ class _AbsensiState extends State<Absensi> {
                       builder: (BuildContext context) {
                         return const ConfirmationDialog();
                       },
-                    );
+                    ).then((value) {
+                      setState(() {
+                        enabled = false;
+                      });
+                    });
                   }
                 });
               }

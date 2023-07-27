@@ -33,6 +33,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
+    getPhoto();
     Pegawai().getPegawaiData().then((value) {
       if(value != null) {
         setState(() {
@@ -48,6 +49,17 @@ class _DashboardState extends State<Dashboard> {
         saveDataPegawai();
       }
     });
+  }
+
+  void getPhoto() async {
+    await Hive.openBox('userData');
+    var box = Hive.box('userData');
+    if(box.get('foto') != null) {
+      setState(() {
+        foto = box.get('foto');
+      });
+      print(foto);
+    }
   }
 
   void saveDataPegawai() async {
@@ -173,7 +185,16 @@ class _DashboardState extends State<Dashboard> {
                                       foto = image!.path;
                                     });
 
-                                    Pegawai().updateFoto(foto);
+                                    Pegawai().updateFoto(foto).then((value) async {
+                                      await Hive.openBox('userData');
+                                      var box = Hive.box('userData');
+
+                                      box.put('foto', foto).then((value) {
+                                        Navigator.pushReplacement(context, MaterialPageRoute(
+                                          builder: (context) => const MainScreen(isFirstLoad: true,),
+                                        ));
+                                      });
+                                    });
                                   },
                                   child: Container(
                                     height: 35,

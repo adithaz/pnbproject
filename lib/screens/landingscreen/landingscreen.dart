@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:pnbproject/screens/landingscreen/bantuan.dart';
 import 'package:pnbproject/screens/landingscreen/home.dart';
-import 'package:pnbproject/screens/landingscreen/informasiweb.dart';
 import 'package:pnbproject/screens/landingscreen/login.dart';
 import 'package:pnbproject/style.dart';
 
@@ -50,12 +49,9 @@ class _LandingScreenState extends State<LandingScreen> {
         body = const Home();
         break;
       case 1:
-        body = const InformasiWeb();
-        break;
-      case 2:
         body = const Bantuan();
         break;
-      case 3:
+      case 2:
         body = Login(isLoggedInUser: isLoggedIn);
         break;
     }
@@ -134,11 +130,9 @@ class _LandingScreenState extends State<LandingScreen> {
                           children: [
                             navigation(0, "Home"),
                             divider(),
-                            navigation(1, "Informasi Web"),
+                            navigation(1, "Bantuan"),
                             divider(),
-                            navigation(2, "Bantuan"),
-                            divider(),
-                            navigation(3, isLoggedIn ? "Dashboard" : "Login"),
+                            navigation(2, isLoggedIn ? "Dashboard" : "Login"),
                           ],
                         ),
                       ],
